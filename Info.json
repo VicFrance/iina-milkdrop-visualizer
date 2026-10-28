@@ -1,0 +1,29 @@
+{
+  "allowedDomains": [],
+  "author": {
+    "name": "Vic"
+  },
+  "description": "MilkDrop visualizations in a dedicated full-resolution window that opens automatically when IINA plays music. 1,927 unique presets, quick preset picker, synced audio reactivity.",
+  "entry": "main.js",
+  "helpPage": "help.html",
+  "identifier": "com.vic.iina-milkdrop-visualizer",
+  "name": "MilkDrop Visualizer",
+  "permissions": [
+    "show-osd",
+    "file-system"
+  ],
+  "preferenceDefaults": {
+    "audioSource": "file",
+    "autoLaunch": true,
+    "blendSeconds": 2.7,
+    "collection": "minimal",
+    "cycle": true,
+    "cycleSeconds": 30,
+    "favorites": [],
+    "preset": ""
+  },
+  "preferencesPage": "pref.html",
+  "version": "0.1.2",
+  "ghRepo": "VicFrance/iina-milkdrop-visualizer",
+  "ghVersion": 1
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MilkDrop Visualizer Settings</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 18px; color: #1c1c1e; font-size: 13px; }
+  @media (prefers-color-scheme: dark) { body { color: #f2f2f7; } }
+  h1 { font-size: 16px; }
+  .row { margin: 12px 0; display: flex; align-items: center; gap: 10px; }
+  label { flex: 1; font-weight: 500; }
+  /* IINA-style toggle switch (a styled checkbox): thin track, small knob,
+     system blue when on. */
+  input.switch { -webkit-appearance: none; appearance: none; width: 36px; height: 20px;
+    border-radius: 999px; background: #e9e9ea; position: relative; cursor: pointer;
+    transition: background 0.2s ease; flex: 0 0 auto; outline: none; margin: 0; }
+  input.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+    border-radius: 50%; background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25), 0 0 1px rgba(0,0,0,0.2); transition: transform 0.2s ease; }
+  input.switch:checked { background: #0a84ff; }
+  input.switch:checked::after { transform: translateX(16px); }
+  input.switch:focus-visible { box-shadow: 0 0 0 3.5px rgba(10,132,255,0.45); }
+  @media (prefers-color-scheme: dark) {
+    input.switch { background: #39393d; }
+    input.switch:checked { background: #0a84ff; }
+  }
+  .credits { color: #8e8e93; font-size: 12px; line-height: 1.6; margin-top: 24px; }
+</style>
+</head>
+<body>
+<h1>MilkDrop Visualizer</h1>
+<div class="row"><label>Open window automatically when an audio file plays</label>
+  <input type="checkbox" class="switch" data-pref-key="autoLaunch"></div>
+<div class="row"><label>Audio source</label>
+  <select data-pref-key="audioSource">
+    <option value="file">Playing file (synced decode)</option>
+    <option value="mic">Microphone / system audio</option>
+    <option value="ambient">Ambient beat</option>
+  </select></div>
+<div class="row"><label>Auto-cycle presets</label>
+  <input type="checkbox" class="switch" data-pref-key="cycle">
+  <select data-pref-key="cycleSeconds">
+    <option value="15">15s</option><option value="30">30s</option>
+    <option value="45">45s</option><option value="60">60s</option><option value="90">90s</option>
+  </select></div>
+<div class="row"><label>Start in collection</label>
+  <select data-pref-key="collection">
+    <option value="originals">MilkDrop Originals (551)</option>
+    <option value="geiss">Geiss' Favorites (1,352)</option>
+    <option value="all">All (1,927)</option>
+    <option value="favorites">★ Favorites</option>
+  </select></div>
+<p class="credits">Original Winamp Milkdrop Visualizer by Ryan Geiss.<br>
+Presets created by the MilkDrop community authors. MilkDrop Originals and the MilkDrop Texture Pack via the projectM project. Geiss' Favorites selected by Ryan Geiss (geisswerks.com).<br>
+Butterchurn (a WebGL implementation of the Milkdrop Visualizer), preset packs and .milk preset converter by Jordan Berg (jberg).</p>
+</body>
+</html>

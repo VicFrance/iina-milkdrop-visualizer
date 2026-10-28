@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MilkDrop Visualizer Help</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 18px; color: #1c1c1e; font-size: 13px; line-height: 1.55; max-width: 560px; }
+  @media (prefers-color-scheme: dark) { body { color: #f2f2f7; } }
+  h1 { font-size: 17px; } h2 { font-size: 14px; margin-top: 18px; }
+  code, kbd { background: rgba(127,127,127,0.18); padding: 1px 6px; border-radius: 5px; font-size: 12px; }
+  table { border-collapse: collapse; } td { padding: 2px 14px 2px 0; }
+</style>
+</head>
+<body>
+<h1>MilkDrop Visualizer</h1>
+<p>Play any music file — <code>.mp3</code>, <code>.m4a</code>, FLAC, AAC, WAV… — and the MilkDrop
+window opens by itself at full resolution. It closes when you close it, and it won't reopen
+for that same track. The next track brings it back (Settings toggle: auto-launch).</p>
+
+<h2>Jumping between presets</h2>
+<table>
+<tr><td><kbd>P</kbd> / <kbd>M</kbd></td><td>Quick preset picker — search all 1,927 unique presets, filter by collection or author, ★ favorites</td></tr>
+<tr><td><kbd>N</kbd> / <kbd>B</kbd></td><td>Next / previous preset</td></tr>
+<tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Previous / next preset</td></tr>
+<tr><td><kbd>R</kbd></td><td>Jump to a random preset (once)</td></tr>
+<tr><td><kbd>F</kbd></td><td>Favorite current preset</td></tr>
+<tr><td><kbd>Space</kbd></td><td>Play / pause</td></tr>
+<tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>Volume</td></tr>
+<tr><td>Double-click / ⛶ button</td><td>Fullscreen (fill-screen)</td></tr>
+</table>
+<h2>MilkDrop Presets</h2>
+<p>MilkDrop Originals (551) — the presets released with MilkDrop itself.<br>
+Geiss' Favorites (1,352) — Ryan Geiss's own favorite presets from geisswerks.com, with 1,249 already in the catalog or MilkDrop Originals and 101 newly converted.<br>
+All (1,927) — every unique preset that also appears in Originals or Geiss' Favorites is listed a single time here — and Favorites.</p>
+<p>The window also loads the MilkDrop Texture Pack (all 67 original textures) plus the extra textures that shipped in Geiss's Favorites, so presets that sample a named texture (worms, sunrise, clouds, manyfish) render with the real image instead of a fallback.</p>
+<p>Random Order toggle: while it is blue, Next picks presets at random (shuffle, no repeats). Switch it off and Next steps through the collection in alphabetical order. Presets auto-cycle every 30s by default — pick the interval (15–90s) from the small menu attached to it.</p>
+
+<h2>How it hears the music</h2>
+<p>IINA's plugin API has no tap on the player's audio output, so the plugin reads the
+playing file itself and streams its bytes to the window, which decodes them with Web Audio
+and plays the decoded buffer in sync with IINA — the visuals react to your actual song.
+(The file-system permission exists only for this read.) Fallbacks in the picker footer:
+<b>Mic / system</b> capture and an <b>Ambient beat</b>. DRM files (Apple Music downloads)
+can't be decoded — use Mic mode for those. The current frame rate is shown at the
+bottom left of the window.</p>
+
+<h2>If something looks stuck</h2>
+<p>Click the window once (macOS mutes webview audio analysis until the window gets a click),
+then check <b>Plugin ▸ MilkDrop Visualizer ▸ Diagnostics</b> and IINA's Log Viewer, filter “MilkDrop”.</p>
+</body>
+</html>
