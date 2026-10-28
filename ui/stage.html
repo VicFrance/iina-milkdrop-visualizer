@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MilkDrop Visualizer</title>
+<link rel="stylesheet" href="stage.css">
+</head>
+<body>
+<canvas id="viz"></canvas>
+<div id="vignette"></div>
+
+<!-- top chrome: track -->
+<header id="topbar" class="chrome">
+  <div class="track">
+    <div id="t-title">MilkDrop Visualizer</div>
+    <div id="t-sub">Waiting for music in IINA…</div>
+  </div>
+  <div class="pills">
+    <span id="pill-link" class="pill warn">Connecting to IINA…</span>
+    <span id="pill-click" class="pill warn hidden">▶ Click anywhere — the browser mutes audio analysis until you do</span>
+  </div>
+</header>
+
+<!-- bottom chrome: transport + preset quick menu -->
+<footer id="bottombar" class="chrome">
+  <div class="group grow">
+    <button id="b-prev" title="Previous preset (B)">‹</button>
+    <button id="b-preset" title="Open the preset picker (P)">
+      <span id="cur-name">—</span>
+      <span id="cur-author"></span>
+    </button>
+    <button id="b-next" title="Next preset (N)">›</button>
+    <button id="b-random" class="toggle on" title="Random preset order — while on, Next picks at random (R jumps once)"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg></button>
+    <button id="b-fav" class="toggle" title="Favorite this preset (F)">☆</button>
+  </div>
+  <div class="group">
+    <button id="b-cycle" class="toggle on" title="Auto-cycle presets">⟳ 30s</button>
+    <button id="b-cycle-menu" title="Cycle interval">▾</button>
+    <button id="b-picker" title="Preset picker (P)">☰ Presets</button>
+    <button id="b-diag" class="toggle" title="Diagnostics (D)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></button>
+    <button id="b-full" title="Fullscreen">⛶</button>
+  </div>
+</footer>
+
+<div id="fps">0 fps</div>
+
+<!-- quick preset picker -->
+<aside id="picker" class="hidden">
+  <div class="picker-head">
+    <div class="picker-title">Jump to a visualization</div>
+    <button id="p-close" title="Close (Esc)">✕</button>
+  </div>
+  <input id="p-search" type="search" placeholder="Search presets or authors…">
+  <div id="p-collections" class="chips"></div>
+  <div id="p-list" tabindex="0"></div>
+  <div class="picker-foot">
+    <label>Audio
+      <select id="p-source">
+        <option value="file">File (synced)</option>
+        <option value="mic">Mic / system</option>
+        <option value="ambient">Ambient beat</option>
+      </select>
+    </label>
+    <span id="p-count" class="dim"></span>
+  </div>
+</aside>
+
+<!-- cycle interval menu (anchored to the ▾ next to the cycle button) -->
+<div id="cycle-menu" class="hidden">
+  <button data-sec="15">15 seconds</button>
+  <button data-sec="30">30 seconds</button>
+  <button data-sec="45">45 seconds</button>
+  <button data-sec="60">60 seconds</button>
+  <button data-sec="90">90 seconds</button>
+</div>
+
+<section id="fallback" class="hidden">
+  <div class="fallback-card">
+    <h1 id="fallback-title">MilkDrop needs a hand</h1>
+    <p id="fallback-text"></p>
+    <div class="fallback-actions">
+      <button id="f-mic">Use microphone / system audio</button>
+      <button id="f-ambient">Use ambient beat</button>
+      <button id="f-retry">Retry file audio</button>
+      <button id="f-render">Retry renderer</button>
+    </div>
+  </div>
+</section>
+
+<div id="toast" class="hidden"></div>
+
+<!-- diagnostics -->
+<aside id="diag" class="hidden">
+  <div class="picker-head">
+    <div class="picker-title">MilkDrop Visualizer diagnostics</div>
+    <button id="d-close" title="Close (Esc)">✕</button>
+  </div>
+  <pre id="diag-body">…</pre>
+  <p class="dim" style="font-size:12px">If presets or audio misbehave, screenshot this panel and send it to me — it shows exactly which link in the chain is broken.</p>
+</aside>
+<audio id="tap" muted playsinline preload="auto" style="display:none"></audio>
+
+<script src="lib/isSupported.min.js"></script>
+<script src="lib/butterchurn.min.js"></script>
+<script src="lib/butterchurnExtraImages.min.js"></script>
+<script src="lib/packs/main.js"></script>
+<script src="lib/packs/extra.js"></script>
+<script src="lib/packs/extra2.js"></script>
+<script src="lib/packs/md1.js"></script>
+<script src="lib/presets-index.js"></script>
+<script src="lib/originals-index.js"></script>
+<script src="lib/geiss-index.js"></script>
+<script src="lib/textures.js"></script>
+<script src="lib/geiss-textures.js"></script>
+<script src="stage.js"></script>
+</body>
+</html>

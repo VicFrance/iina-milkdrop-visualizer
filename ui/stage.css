@@ -1,0 +1,162 @@
+/* Design language: IINA / macOS native — dark vibrancy glass, hairline
+   borders, system blue accent (#0A84FF), soft layered shadows, SF text. */
+:root {
+  --glass: rgba(30, 30, 34, 0.60);
+  --glass-solid: rgba(30, 30, 34, 0.88);
+  --border: rgba(255, 255, 255, 0.12);
+  --text: #fff;
+  --dim: rgba(255, 255, 255, 0.62);
+  --accent: #0a84ff;
+  --shadow-bar: 0 4px 18px rgba(0, 0, 0, 0.38), 0 1px 4px rgba(0, 0, 0, 0.25);
+  --shadow-panel: 0 0 0 0.5px rgba(0, 0, 0, 0.35), 0 18px 50px rgba(0, 0, 0, 0.45);
+  --focus-ring: 0 0 0 3.5px rgba(10, 132, 255, 0.45);
+}
+::selection { background: rgba(10, 132, 255, 0.45); }
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  color: var(--text); -webkit-user-select: none; user-select: none;
+}
+body.cursor-hidden, body.cursor-hidden button { cursor: none; }
+#viz { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+#vignette { position: fixed; inset: 0; pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 58%, rgba(0,0,0,0.32) 100%); }
+.hidden { opacity: 0 !important; pointer-events: none !important; }
+
+/* ---------- chrome bars ---------- */
+.chrome {
+  position: fixed; left: 0; right: 0; z-index: 4;
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px;
+  transition: opacity 0.45s ease;
+}
+#topbar { top: 0; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.55), transparent); }
+/* No bar background: the bottom section floats over the visuals and
+   each BUTTON carries the translucent-gray treatment instead. */
+#bottombar { bottom: 0; justify-content: space-between; }
+.track #t-title { font-size: 16.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 46vw; }
+.track #t-sub { font-size: 12.5px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 46vw; }
+.pills { display: flex; gap: 8px; }
+.pill { font-size: 11.5px; font-weight: 600; padding: 5px 11px; border-radius: 999px;
+  background: var(--glass); border: 1px solid var(--border); box-shadow: var(--shadow-bar);
+  backdrop-filter: blur(14px) saturate(1.5); -webkit-backdrop-filter: blur(14px) saturate(1.5); }
+.pill.warn { color: #ffd60a; border-color: rgba(255, 214, 10, 0.55); }
+.group { display: flex; gap: 6px; align-items: center; }
+.group.grow { flex: 1; justify-content: center; min-width: 0; }
+button {
+  font: inherit; font-size: 13px; font-weight: 500; color: var(--text);
+  /* Translucent gray + vibrancy blur + hairline edge (IINA-settings style). */
+  background: rgba(58, 58, 62, 0.55); border: 1px solid var(--border); border-radius: 8px;
+  padding: 7px 12px; cursor: pointer; box-shadow: var(--shadow-bar);
+  backdrop-filter: blur(18px) saturate(1.5); -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  white-space: nowrap; transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+button:hover { background: rgba(255,255,255,0.14); }
+button:active { background: rgba(255,255,255,0.20); }
+button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+button.toggle.on { background: var(--accent); border-color: var(--accent); }
+/* Locked geometry: the preset bar never resizes with the length of a name.
+   Every button in the whole bottom bar — center group and right-hand
+   group alike — shares the same 46px height. */
+#bottombar .group > button { height: 46px; }
+#b-preset { display: flex; flex-direction: column; align-items: center; justify-content: center;
+  width: 460px; max-width: 46vw; flex: 0 0 auto; padding: 3px 16px; }
+#b-preset #cur-name { font-size: 13.5px; font-weight: 700; width: 100%; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#b-preset #cur-author { font-size: 10.5px; color: var(--dim); letter-spacing: 0.4px; text-transform: uppercase;
+  width: 100%; min-height: 13px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#b-prev, #b-next { width: 44px; padding-left: 0; padding-right: 0; font-size: 17px; }
+/* Random and Favorite are square too — the same 44px width as prev/next. */
+#b-random, #b-fav { width: 44px; padding-left: 0; padding-right: 0; font-size: 16px; }
+#b-random svg { display: block; margin: 0 auto; }
+/* Diagnostics and Fullscreen are square: width equals the shared 46px height. */
+#b-diag, #b-full { width: 46px; padding-left: 0; padding-right: 0; }
+#b-diag svg { display: block; margin: 0 auto; }
+#b-full { font-size: 17px; }
+#b-cycle-menu { width: 26px; padding-left: 0; padding-right: 0; margin-left: -4px; }
+
+/* ---------- picker ---------- */
+#picker {
+  position: fixed; top: 0; right: 0; bottom: 0; width: min(460px, 94vw); z-index: 6;
+  background: var(--glass-solid); border-left: 1px solid var(--border);
+  box-shadow: -18px 0 44px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(26px) saturate(1.5); -webkit-backdrop-filter: blur(26px) saturate(1.5);
+  display: flex; flex-direction: column; padding: 14px;
+  transform: translateX(0); transition: opacity 0.3s ease, transform 0.3s ease;
+}
+#picker.hidden { transform: translateX(24px); }
+.picker-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.picker-title { font-size: 15px; font-weight: 700; }
+#p-search { width: 100%; font: inherit; font-size: 13.5px; padding: 8px 12px; border-radius: 8px;
+  border: 1px solid var(--border); background: rgba(255,255,255,0.09); color: var(--text);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.28); outline: none; margin-bottom: 9px; }
+#p-search:focus { border-color: var(--accent); box-shadow: var(--focus-ring); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chips button { border-radius: 999px; padding: 4px 12px; font-size: 12.5px; box-shadow: none; }
+.chips button.on { background: var(--accent); border-color: var(--accent); }
+#p-list { flex: 1; overflow-y: auto; outline: none; }
+#p-list::-webkit-scrollbar { width: 8px; }
+#p-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.22); border-radius: 4px; }
+#p-list::-webkit-scrollbar-track { background: transparent; }
+.preset-row { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 6px; cursor: pointer; }
+.preset-row:hover { background: rgba(255, 255, 255, 0.08); }
+.preset-row.active { background: var(--accent); }
+.preset-row .p-name { flex: 1; min-width: 0; }
+/* One line per preset: Author - Title. */
+.preset-row .p-line { font-size: 13.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.preset-row .p-line .p-author { font-weight: 700; }
+.preset-row .p-line .p-sep { color: var(--dim); }
+.preset-row.active .p-line .p-sep { color: rgba(255, 255, 255, 0.78); }
+.preset-row .star { background: none; border: none; box-shadow: none; font-size: 15px; padding: 2px 4px; color: var(--dim); }
+.preset-row .star.fav { color: #ffd60a; }
+.preset-row.active .star { color: rgba(255, 255, 255, 0.85); }
+.preset-row.active .star.fav { color: #ffd60a; }
+.author-head { font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+  color: var(--dim); padding: 10px 8px 3px; }
+.picker-foot { display: flex; gap: 14px; align-items: center; padding-top: 10px; border-top: 1px solid var(--border); font-size: 12px; }
+.picker-foot select { font: inherit; font-size: 12px; margin-left: 4px; }
+.dim { color: var(--dim); margin-left: auto; }
+
+/* ---------- fallback / toast ---------- */
+#fallback { position: fixed; inset: 0; z-index: 7; display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.55); transition: opacity 0.4s ease; }
+.fallback-card { max-width: 470px; margin: 20px; padding: 26px 28px; border-radius: 14px;
+  background: var(--glass-solid); border: 1px solid var(--border); box-shadow: var(--shadow-panel); }
+.fallback-card h1 { font-size: 19px; margin: 0 0 8px; }
+.fallback-card p { font-size: 13.5px; line-height: 1.5; color: var(--dim); margin: 0 0 14px; }
+.fallback-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Cycle-interval dropdown, anchored above the cycle button. */
+#cycle-menu { position: fixed; z-index: 7; min-width: 148px; padding: 5px;
+  display: flex; flex-direction: column; gap: 2px; border-radius: 10px;
+  background: var(--glass-solid); border: 1px solid var(--border); box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(26px) saturate(1.5); -webkit-backdrop-filter: blur(26px) saturate(1.5); }
+#cycle-menu.hidden { display: none; }
+#cycle-menu button { box-shadow: none; border-color: transparent; background: transparent;
+  text-align: left; font-size: 12.5px; padding: 6px 10px; border-radius: 6px; }
+#cycle-menu button:hover { background: rgba(255, 255, 255, 0.10); }
+#cycle-menu button.on { background: var(--accent); }
+
+/* FPS readout, bottom-left — same font and size as the cycle-interval
+   menu items (12.5px), white, always visible. */
+#fps { position: fixed; left: 16px; bottom: 16px; z-index: 6; pointer-events: none;
+  font-size: 12.5px; font-weight: 500; color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55); }
+
+#toast { position: fixed; left: 50%; bottom: 13vh; transform: translateX(-50%); z-index: 8;
+  padding: 9px 16px; border-radius: 999px; font-size: 13px; font-weight: 600;
+  background: var(--glass); border: 1px solid var(--border); box-shadow: var(--shadow-bar);
+  backdrop-filter: blur(14px) saturate(1.5); -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  transition: opacity 0.45s ease; pointer-events: none; white-space: nowrap; }
+
+#diag { position: fixed; top: 0; left: 0; bottom: 0; width: min(430px, 94vw); z-index: 6;
+  background: var(--glass-solid); border-right: 1px solid var(--border);
+  box-shadow: 18px 0 44px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(26px) saturate(1.5); -webkit-backdrop-filter: blur(26px) saturate(1.5);
+  padding: 14px; transition: opacity 0.3s ease; overflow-y: auto; }
+#diag.hidden { opacity: 0; pointer-events: none; }
+#diag-body { font-family: ui-monospace, Menlo, monospace; font-size: 12px; line-height: 1.65;
+  white-space: pre-wrap; word-break: break-word; background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
